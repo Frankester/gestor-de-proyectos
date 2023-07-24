@@ -42,8 +42,11 @@ public class Tarea extends Persistence{
     @JoinColumn(name = "usuario_asignado", referencedColumnName =  "username")
     private Usuario usuairoAsignado;
 
+    private Boolean tareaVirgente;
+
     public Tarea() {
         this.archivos = new HashSet<>();
         this.comentarios = new ArrayList<>();
+        this.tareaVirgente = true;
     }
 }

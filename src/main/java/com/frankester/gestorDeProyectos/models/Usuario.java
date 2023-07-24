@@ -1,5 +1,6 @@
 package com.frankester.gestorDeProyectos.models;
 
+import com.frankester.gestorDeProyectos.models.mensajeria.ChatRoom;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -17,4 +18,18 @@ public class Usuario {
 
     private String password;
 
+    @ManyToMany(mappedBy = "miembros")
+    private List<Proyecto> proyectos;
+
+
+    @OneToMany(mappedBy = "usuairoAsignado")
+    private List<Tarea> tareas;
+
+    private Boolean cuenteVirgente;
+
+    public Usuario() {
+        this.proyectos = new ArrayList<>();
+        this.tareas = new ArrayList<>();
+        this.cuenteVirgente = true;
+    }
 }

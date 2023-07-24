@@ -12,7 +12,6 @@ import java.util.List;
 @Entity
 public class Proyecto extends Persistence {
 
-
     private String nombre;
 
     private String descripcion;
@@ -39,8 +38,11 @@ public class Proyecto extends Persistence {
     @JoinColumn(name = "id_chat_room", referencedColumnName =  "id")
     private ChatRoom salaDeChat;
 
+    private Boolean proyectoVirgente;
+
     public Proyecto() {
         this.tareas = new ArrayList<>();
         this.miembros =  new ArrayList<>();
+        this.proyectoVirgente = true;
     }
 }
