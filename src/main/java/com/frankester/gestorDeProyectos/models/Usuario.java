@@ -4,6 +4,7 @@ import com.frankester.gestorDeProyectos.models.mensajeria.ChatRoom;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,9 +28,17 @@ public class Usuario {
 
     private Boolean cuenteVirgente;
 
+    private String verificationCode;
+    private LocalDateTime verificationCodeExpiration;
+
+    private Boolean isEmailVerificated;
+    private Integer verificationCodeTries;
+
     public Usuario() {
         this.proyectos = new ArrayList<>();
         this.tareas = new ArrayList<>();
         this.cuenteVirgente = true;
+        this.isEmailVerificated = false;
+        this.verificationCodeTries = 0;
     }
 }

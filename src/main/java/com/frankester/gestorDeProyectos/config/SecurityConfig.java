@@ -68,6 +68,7 @@ public class SecurityConfig {
                         authorize
                                 .requestMatchers("/auth/login").permitAll()
                                 .requestMatchers("/auth/register").permitAll()
+                                .requestMatchers("/auth/verifycode").permitAll()
                 );
 
         return http.build();

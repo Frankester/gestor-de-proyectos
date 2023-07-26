@@ -13,6 +13,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class AuthService {
 
@@ -26,21 +28,15 @@ public class AuthService {
     private AuthenticationManager authManager;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private UserService userService;
 
-    public void register(AuthDTO registerReq) throws UserAlreadyExistsException {
+    public String register(AuthDTO registerReq) throws UserAlreadyExistsException {
         if(this.repo.existsByUsername(registerReq.getUsername())){
             throw new UserAlreadyExistsException("Ya existe un usuario con el username: \""+ registerReq.getUsername()+"\"" );
         }
 
-
-        Usuario user = new Usuario();
-
-        user.setUsername(registerReq.getUsername());
-        user.setPassword(passwordEncoder.encode(registerReq.getPassword()));
-
-        this.repo.save(user);
-
+        // devuelvo el codigo de verificacion generado
+        return this.userService.registerUser(registerReq);
     }
 
     public JwtResponse login(AuthDTO login) {
