@@ -1,5 +1,7 @@
 package com.frankester.gestorDeProyectos.models;
 
+import com.frankester.gestorDeProyectos.models.estados.EstadoTarea;
+import com.frankester.gestorDeProyectos.models.estados.Prioridad;
 import com.frankester.gestorDeProyectos.models.mensajeria.ChatRoom;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -18,8 +20,7 @@ public class Proyecto extends Persistence {
 
     private LocalDate fechaLimite;
 
-    @OneToMany
-    @JoinColumn(name = "id_proyecto", referencedColumnName =  "id")
+    @OneToMany(mappedBy = "proyecto")
     private List<Tarea> tareas;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -30,11 +31,11 @@ public class Proyecto extends Persistence {
     )
     private List<Usuario> miembros;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_panel_de_control", referencedColumnName =  "id")
     private PanelDeControl panelDeControl;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "id_chat_room", referencedColumnName =  "id")
     private ChatRoom salaDeChat;
 
@@ -44,7 +45,6 @@ public class Proyecto extends Persistence {
         this.tareas = new ArrayList<>();
         this.miembros =  new ArrayList<>();
         this.proyectoVirgente = true;
-        this.salaDeChat = new ChatRoom();
     }
 
     public void addMiembro(Usuario usuario){
@@ -54,4 +54,28 @@ public class Proyecto extends Persistence {
     public void addTarea(Tarea tarea){
         this.tareas.add(tarea);
     }
+
+    public Float calcularProgresoDelProyecto(){
+        int cantidadDeTareasTotal = this.tareas.size();
+        int cantidadDeTareasRealizadas = this.tareas.stream()
+                .filter(tarea -> tarea.getEstado().equals(EstadoTarea.REALIZADA) )
+                .toList()
+                .size();
+
+        return (float) ((cantidadDeTareasRealizadas/ cantidadDeTareasTotal)* 100);
+    }
+
+    public List<Tarea> obtenerAlertasDelProyecto(){
+        return this.tareas.stream()
+                .filter(tarea -> tarea.getEstado().equals(EstadoTarea.PENDIENTE) && tarea.getPrioridad().equals(Prioridad.ALTA)  )
+                .toList();
+    }
+
+    public List<Tarea> obtenerTareasPendientes(){
+        return this.tareas.stream()
+                .filter(tarea -> tarea.getEstado().equals(EstadoTarea.PENDIENTE))
+                .toList();
+    }
+
+
 }

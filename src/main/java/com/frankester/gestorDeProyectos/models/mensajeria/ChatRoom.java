@@ -18,7 +18,7 @@ public class ChatRoom extends Persistence {
 
     private String nombre;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "administrador", referencedColumnName = "username")
     private Usuario administrador;
 

@@ -20,4 +20,8 @@ public interface RepoTareas extends JpaRepository<Tarea, Long> {
     @RestResource(exported = false)
     @Override
     void delete(Tarea tarea);
+
+    @RestResource(exported = false)
+    @Override
+    <S extends Tarea> S save(S entity);
 }

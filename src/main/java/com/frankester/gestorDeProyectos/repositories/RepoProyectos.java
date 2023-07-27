@@ -19,4 +19,8 @@ public interface RepoProyectos extends JpaRepository<Proyecto, Long> {
     @RestResource(exported = false)
     @Override
     void delete(Proyecto proyecto);
+
+    @RestResource(exported = false)
+    @Override
+    <S extends Proyecto> S save(S entity);
 }

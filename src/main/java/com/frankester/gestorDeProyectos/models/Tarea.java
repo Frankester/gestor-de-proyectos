@@ -42,6 +42,10 @@ public class Tarea extends Persistence{
     @JoinColumn(name = "usuario_asignado", referencedColumnName =  "username")
     private Usuario usuairoAsignado;
 
+    @ManyToOne(fetch= FetchType.EAGER)
+    @JoinColumn(name = "id_proyecto", referencedColumnName =  "id")
+    private Proyecto proyecto;
+
     private Boolean tareaVirgente;
 
     public Tarea() {

@@ -1,10 +1,13 @@
 package com.frankester.gestorDeProyectos.services;
 
+import com.frankester.gestorDeProyectos.exceptions.custom.UsuarioNotFoundException;
 import com.frankester.gestorDeProyectos.models.DTOs.AuthDTO;
 import com.frankester.gestorDeProyectos.models.Usuario;
 import com.frankester.gestorDeProyectos.repositories.RepoUsuarios;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -120,5 +123,32 @@ public class UserService implements UserDetailsService {
         repo.save(usuario);
 
         return ResponseEntity.ok("Email del usuario '"+ usuario.getUsername() +"' se verifico con éxito");
+    }
+
+
+    public Usuario obtnerUsuarioAutenticado(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication() ;
+
+        org.springframework.security.core.userdetails.User userDetail =
+                (org.springframework.security.core.userdetails.User) auth.getPrincipal();
+
+
+        Optional<Usuario> usuarioOp = this.repo.findByUsername(userDetail.getUsername());
+
+        if(usuarioOp.isEmpty()){
+            throw new UsernameNotFoundException("No se encontro el usuario con el username: '"+userDetail.getUsername()+"', al intentar de obtenerlo de la peticion");
+        }
+
+        return usuarioOp.get();
+    }
+
+    public Usuario obtnerUsuarioPorUsername(String username) throws UsuarioNotFoundException {
+        Optional<Usuario> userOp = this.repo.findByUsername(username);
+
+        if(userOp.isEmpty()){
+            throw new UsuarioNotFoundException("No existe el usuario con el username: '" +username+ "'");
+        }
+
+       return userOp.get();
     }
 }
