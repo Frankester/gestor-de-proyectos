@@ -5,6 +5,5 @@ import lombok.Data;
 @Data
 public class MensajeDeChat {
     private String mensaje;
-    private String usuario;
-    private MessageType tipoDeMensaje;
+    private String username;
 }

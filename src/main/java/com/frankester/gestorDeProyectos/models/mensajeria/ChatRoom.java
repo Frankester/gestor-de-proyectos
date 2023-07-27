@@ -25,4 +25,8 @@ public class ChatRoom extends Persistence {
     public ChatRoom() {
         this.mensajes = new ArrayList<>();
     }
+
+    public void addMensaje(Mensaje mensajeAGuardar) {
+        this.mensajes.add(mensajeAGuardar);
+    }
 }

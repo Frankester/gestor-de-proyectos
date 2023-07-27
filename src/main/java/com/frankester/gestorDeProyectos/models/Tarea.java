@@ -49,4 +49,12 @@ public class Tarea extends Persistence{
         this.comentarios = new ArrayList<>();
         this.tareaVirgente = true;
     }
+
+    public void addComentario(Mensaje comentario){
+        this.comentarios.add(comentario);
+    }
+
+    public void addArchivo(String nombreArchivo){
+        this.archivos.add(nombreArchivo);
+    }
 }

@@ -34,7 +34,7 @@ public class Proyecto extends Persistence {
     @JoinColumn(name = "id_panel_de_control", referencedColumnName =  "id")
     private PanelDeControl panelDeControl;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_chat_room", referencedColumnName =  "id")
     private ChatRoom salaDeChat;
 
@@ -44,5 +44,14 @@ public class Proyecto extends Persistence {
         this.tareas = new ArrayList<>();
         this.miembros =  new ArrayList<>();
         this.proyectoVirgente = true;
+        this.salaDeChat = new ChatRoom();
+    }
+
+    public void addMiembro(Usuario usuario){
+        this.miembros.add(usuario);
+    }
+
+    public void addTarea(Tarea tarea){
+        this.tareas.add(tarea);
     }
 }
