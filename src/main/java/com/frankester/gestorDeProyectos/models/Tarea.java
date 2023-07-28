@@ -1,5 +1,6 @@
 package com.frankester.gestorDeProyectos.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.frankester.gestorDeProyectos.models.estados.EstadoTarea;
 import com.frankester.gestorDeProyectos.models.estados.Prioridad;
 import com.frankester.gestorDeProyectos.models.mensajeria.Mensaje;
@@ -42,6 +43,7 @@ public class Tarea extends Persistence{
     @JoinColumn(name = "usuario_asignado", referencedColumnName =  "username")
     private Usuario usuairoAsignado;
 
+    @JsonIgnore
     @ManyToOne(fetch= FetchType.EAGER)
     @JoinColumn(name = "id_proyecto", referencedColumnName =  "id")
     private Proyecto proyecto;

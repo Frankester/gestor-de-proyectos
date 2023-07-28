@@ -10,7 +10,7 @@ import org.springframework.data.rest.core.annotation.RestResource;
 
 import java.util.Optional;
 
-@RepositoryRestResource(path="usuarios")
+@RepositoryRestResource(path="usuarios", exported = false)
 public interface RepoUsuarios extends JpaRepository<Usuario, String> {
 
     Usuario findByEmail(String email);

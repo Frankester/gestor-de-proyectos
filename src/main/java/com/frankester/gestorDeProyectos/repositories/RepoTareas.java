@@ -11,6 +11,7 @@ import org.springframework.data.rest.core.annotation.RestResource;
 @RepositoryRestResource(path = "tareas")
 public interface RepoTareas extends JpaRepository<Tarea, Long> {
 
+    @RestResource(path = "encontrarPorTitulo", rel = "buscarPorTitulo")
     Page<Proyecto> findByTitulo(Pageable page, String titulo);
 
     @RestResource(exported = false)

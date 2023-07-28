@@ -7,6 +7,7 @@ import com.frankester.gestorDeProyectos.models.DTOs.VerificationCodeRequest;
 import com.frankester.gestorDeProyectos.services.AuthService;
 import com.frankester.gestorDeProyectos.services.EmailService;
 import com.frankester.gestorDeProyectos.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +25,7 @@ public class AuthController {
 
 
     @PostMapping("/auth/register")
-    public ResponseEntity<Object> registerUser(@RequestBody AuthDTO request) throws UserAlreadyExistsException {
+    public ResponseEntity<Object> registerUser(@Valid @RequestBody AuthDTO request) throws UserAlreadyExistsException {
         // Realizar el registro del usuario y generar el código de verificación, y enviar el mail
         authService.register(request);
 
@@ -32,7 +33,7 @@ public class AuthController {
     }
 
     @PostMapping("/auth/verifycode")
-    public ResponseEntity<Object> verifyUserEmail(@RequestBody VerificationCodeRequest request) {
+    public ResponseEntity<Object> verifyUserEmail(@Valid @RequestBody VerificationCodeRequest request) {
         // Verificar si el usuario ya existe
         if (!userService.isUserExists(request.getEmail())) {
             return ResponseEntity.badRequest().body("El usuario no está registrado.");
@@ -43,7 +44,7 @@ public class AuthController {
     }
 
     @PostMapping("/auth/login")
-    public ResponseEntity<Object> loginUser(@RequestBody AuthDTO request) {
+    public ResponseEntity<Object> loginUser(@Valid @RequestBody AuthDTO request) {
         // Verificar si el usuario ya existe
         if (!userService.isUserExists(request.getEmail())) {
             return ResponseEntity.badRequest().body("El usuario '"+ request.getUsername() +"' no se encuentra registrado en el sistema.");

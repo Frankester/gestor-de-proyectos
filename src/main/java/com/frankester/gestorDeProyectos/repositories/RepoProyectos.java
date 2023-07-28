@@ -10,7 +10,9 @@ import org.springframework.data.rest.core.annotation.RestResource;
 
 @RepositoryRestResource(path = "proyectos")
 public interface RepoProyectos extends JpaRepository<Proyecto, Long> {
-    Page<Proyecto> findByNombre(Pageable page, String Nombre);
+
+    @RestResource(path = "encontrarPorNombre", rel = "buscarPorNombre")
+    Page<Proyecto> findByNombre(Pageable page, String nombre);
 
     @RestResource(exported = false)
     @Override

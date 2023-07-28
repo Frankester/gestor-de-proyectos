@@ -26,6 +26,8 @@ public class TareaService {
     @Autowired
     private UserService userService;
 
+    @Autowired ProyectoService proyectoService;
+
     public Tarea obtenerTareaConId(Long tareaId) throws TareaNotFoundException {
         Optional<Tarea> tareaOp = this.repoTareas.findById(tareaId);
 
@@ -56,9 +58,11 @@ public class TareaService {
         actualizarTarea(tarea);
     }
 
-    public Tarea crearTarea(TareaRequest tareaRequest, Usuario usuarioDelCreadorDeLaTarea) throws UsuarioNotFoundException {
+    public Tarea crearTarea(TareaRequest tareaRequest, Usuario usuarioDelCreadorDeLaTarea) throws UsuarioNotFoundException, ProyectoNotFoundException {
 
         Usuario usuarioAsignado = userService.obtnerUsuarioPorUsername(tareaRequest.getUsername());
+
+        Proyecto proyecto = this.proyectoService.obtenerProyectoConId(tareaRequest.getIdProyecto());
 
         Tarea nuevaTarea = new Tarea();
         nuevaTarea.setEstado(tareaRequest.getEstado());
@@ -68,6 +72,7 @@ public class TareaService {
         nuevaTarea.setTitulo(tareaRequest.getTitulo());
 
         nuevaTarea.setUsuairoAsignado(usuarioAsignado);
+        nuevaTarea.setProyecto(proyecto);
 
         tareaRequest.getComentarios().forEach((mensaje -> {
             Mensaje comentario = new Mensaje();
@@ -83,8 +88,10 @@ public class TareaService {
         return nuevaTarea;
     }
 
-    public Tarea actializarTarea(Long idTarea, TareaRequest tareaRequest, Usuario usuarioDelCreadorDeLaTarea) throws TareaNotFoundException, UsuarioNotFoundException {
+    public Tarea actializarTarea(Long idTarea, TareaRequest tareaRequest, Usuario usuarioDelCreadorDeLaTarea) throws TareaNotFoundException, UsuarioNotFoundException, ProyectoNotFoundException {
         Usuario usuarioAsignado = this.userService.obtnerUsuarioPorUsername(tareaRequest.getUsername());
+
+        Proyecto proyecto = this.proyectoService.obtenerProyectoConId(tareaRequest.getIdProyecto());
 
         Tarea tareaAActualizar = obtenerTareaConId(idTarea);
         tareaAActualizar.setEstado(tareaRequest.getEstado());
@@ -94,6 +101,7 @@ public class TareaService {
         tareaAActualizar.setTitulo(tareaRequest.getTitulo());
 
         tareaAActualizar.setUsuairoAsignado(usuarioAsignado);
+        tareaAActualizar.setProyecto(proyecto);
 
         tareaRequest.getComentarios().forEach((mensaje -> {
             Mensaje comentario = new Mensaje();

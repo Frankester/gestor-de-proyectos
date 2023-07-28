@@ -1,7 +1,9 @@
 package com.frankester.gestorDeProyectos.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.frankester.gestorDeProyectos.models.mensajeria.ChatRoom;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -17,21 +19,28 @@ public class Usuario {
 
     private String email;
 
+    @JsonIgnore
     private String password;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "miembros")
     private List<Proyecto> proyectos;
 
-
+    @JsonIgnore
     @OneToMany(mappedBy = "usuairoAsignado")
     private List<Tarea> tareas;
 
     private Boolean cuenteVirgente;
 
+    @JsonIgnore
     private String verificationCode;
+
+    @JsonIgnore
     private LocalDateTime verificationCodeExpiration;
 
     private Boolean isEmailVerificated;
+
+    @JsonIgnore
     private Integer verificationCodeTries;
 
     public Usuario() {

@@ -1,5 +1,6 @@
 package com.frankester.gestorDeProyectos.controllers;
 
+import com.frankester.gestorDeProyectos.exceptions.custom.ProyectoNotFoundException;
 import com.frankester.gestorDeProyectos.exceptions.custom.TareaNotFoundException;
 import com.frankester.gestorDeProyectos.exceptions.custom.UsuarioNotFoundException;
 import com.frankester.gestorDeProyectos.models.DTOs.TareaRequest;
@@ -8,6 +9,7 @@ import com.frankester.gestorDeProyectos.models.Tarea;
 import com.frankester.gestorDeProyectos.models.Usuario;
 import com.frankester.gestorDeProyectos.services.TareaService;
 import com.frankester.gestorDeProyectos.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.ResponseEntity;
@@ -52,7 +54,7 @@ public class TareasController {
     }
 
     @PostMapping(path = {"/", ""})
-    public ResponseEntity<?> crearTarea(@RequestBody TareaRequest request) throws UsuarioNotFoundException {
+    public ResponseEntity<?> crearTarea(@Valid  @RequestBody TareaRequest request) throws UsuarioNotFoundException, ProyectoNotFoundException {
 
         Usuario usuario = userService.obtnerUsuarioAutenticado();
 
@@ -62,7 +64,7 @@ public class TareasController {
     }
 
     @PutMapping("/{idTarea}")
-    public ResponseEntity<?> crearTarea(@PathVariable Long idTarea, @RequestBody TareaRequest request) throws UsuarioNotFoundException, TareaNotFoundException {
+    public ResponseEntity<?> actualizarTarea(@PathVariable Long idTarea, @Valid @RequestBody TareaRequest request) throws UsuarioNotFoundException, TareaNotFoundException, ProyectoNotFoundException {
 
         Usuario usuario = userService.obtnerUsuarioAutenticado();
 

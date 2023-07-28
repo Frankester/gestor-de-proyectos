@@ -10,6 +10,7 @@ import com.frankester.gestorDeProyectos.models.Tarea;
 import com.frankester.gestorDeProyectos.models.Usuario;
 import com.frankester.gestorDeProyectos.models.mensajeria.ChatRoom;
 import com.frankester.gestorDeProyectos.services.ProyectoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class ProyectosController {
     }
 
     @PostMapping("/{idProyecto}/salaDeChat")
-    public ResponseEntity<?> crearSalaDeChat(@PathVariable Long idProyecto, @RequestBody ChatRoomRequest request) throws ProyectoNotFoundException, ChatRoomAlreadyExistException, UsuarioNotFoundException {
+    public ResponseEntity<?> crearSalaDeChat(@PathVariable Long idProyecto, @Valid @RequestBody ChatRoomRequest request) throws ProyectoNotFoundException, ChatRoomAlreadyExistException, UsuarioNotFoundException {
 
 
         Proyecto proyecto = this.proyectoService.obtenerProyectoConId(idProyecto);
@@ -46,7 +47,7 @@ public class ProyectosController {
     }
 
     @PutMapping("/{idProyecto}/salaDeChat")
-    public ResponseEntity<?> actualizarSalaDeChat(@PathVariable Long idProyecto, @RequestBody ChatRoomRequest request) throws ProyectoNotFoundException, ChatRoomNotFoundException, UsuarioNotFoundException {
+    public ResponseEntity<?> actualizarSalaDeChat(@PathVariable Long idProyecto, @Valid @RequestBody ChatRoomRequest request) throws ProyectoNotFoundException, ChatRoomNotFoundException, UsuarioNotFoundException {
 
         Proyecto proyecto = this.proyectoService.obtenerProyectoConId(idProyecto);
 
@@ -74,7 +75,7 @@ public class ProyectosController {
     }
 
     @PostMapping(path = {"/", ""})
-    public ResponseEntity<?> crearProyecto(@RequestBody ProyectoRequest request) throws ChatRoomAlreadyExistException, UsuarioNotFoundException {
+    public ResponseEntity<?> crearProyecto(@Valid @RequestBody ProyectoRequest request) throws ChatRoomAlreadyExistException, UsuarioNotFoundException {
 
         Proyecto nuevoProyecto = proyectoService.crearProyecto(request);
 
@@ -82,7 +83,7 @@ public class ProyectosController {
     }
 
     @PutMapping("/{idTarea}")
-    public ResponseEntity<?> actualizarProyecto(@PathVariable Long idProyecto, @RequestBody ProyectoRequest request) throws ProyectoNotFoundException {
+    public ResponseEntity<?> actualizarProyecto(@PathVariable Long idProyecto, @Valid @RequestBody ProyectoRequest request) throws ProyectoNotFoundException {
 
         Proyecto nuevoProyecto = proyectoService.actualizarProyecto(idProyecto, request);
 
