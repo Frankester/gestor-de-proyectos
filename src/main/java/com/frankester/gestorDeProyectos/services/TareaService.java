@@ -1,5 +1,7 @@
 package com.frankester.gestorDeProyectos.services;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.frankester.gestorDeProyectos.exceptions.custom.ProyectoNotFoundException;
 import com.frankester.gestorDeProyectos.exceptions.custom.TareaNotFoundException;
 import com.frankester.gestorDeProyectos.exceptions.custom.UsuarioNotFoundException;
@@ -11,9 +13,12 @@ import com.frankester.gestorDeProyectos.models.mensajeria.Mensaje;
 import com.frankester.gestorDeProyectos.repositories.RepoTareas;
 import com.frankester.gestorDeProyectos.repositories.RepoUsuarios;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 
@@ -27,6 +32,12 @@ public class TareaService {
     private UserService userService;
 
     @Autowired ProyectoService proyectoService;
+
+    @Autowired
+    private AmazonS3 s3;
+
+    @Value("${aws.bucketName}")
+    private String BucketName;
 
     public Tarea obtenerTareaConId(Long tareaId) throws TareaNotFoundException {
         Optional<Tarea> tareaOp = this.repoTareas.findById(tareaId);
@@ -52,7 +63,11 @@ public class TareaService {
         requestFiles.forEach((filename, file) -> {
             tarea.addArchivo(filename);
 
-            persistirArchivo(file, tarea.getId());
+            try {
+                persistirArchivo(file, tarea.getId());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         });
 
         actualizarTarea(tarea);
@@ -117,8 +132,14 @@ public class TareaService {
         return tareaAActualizar;
     }
 
-    private void persistirArchivo(MultipartFile file, Long tareaId){
+    private void persistirArchivo(MultipartFile file, Long tareaId) throws IOException {
         //TODO PERSISTIR ARCHIVO EN LA NUBE COMO AWS S3
+        File archivoAGuardar = file.getResource().getFile();
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentType(file.getContentType());
+
+        this.s3.putObject(BucketName, file.getName(),file.getInputStream(), metadata);
+
     }
 
 }
