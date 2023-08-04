@@ -133,13 +133,10 @@ public class TareaService {
     }
 
     private void persistirArchivo(MultipartFile file, Long tareaId) throws IOException {
-        //TODO PERSISTIR ARCHIVO EN LA NUBE COMO AWS S3
-        File archivoAGuardar = file.getResource().getFile();
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(file.getContentType());
 
         this.s3.putObject(BucketName, file.getName(),file.getInputStream(), metadata);
-
     }
 
 }
