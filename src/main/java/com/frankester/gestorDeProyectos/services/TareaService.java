@@ -1,7 +1,5 @@
 package com.frankester.gestorDeProyectos.services;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.frankester.gestorDeProyectos.exceptions.custom.ProyectoNotFoundException;
 import com.frankester.gestorDeProyectos.exceptions.custom.TareaNotFoundException;
 import com.frankester.gestorDeProyectos.exceptions.custom.UsuarioNotFoundException;
@@ -11,14 +9,18 @@ import com.frankester.gestorDeProyectos.models.Tarea;
 import com.frankester.gestorDeProyectos.models.Usuario;
 import com.frankester.gestorDeProyectos.models.mensajeria.Mensaje;
 import com.frankester.gestorDeProyectos.repositories.RepoTareas;
-import com.frankester.gestorDeProyectos.repositories.RepoUsuarios;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.*;
 
-import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
@@ -34,7 +36,7 @@ public class TareaService {
     @Autowired ProyectoService proyectoService;
 
     @Autowired
-    private AmazonS3 s3;
+    private S3Client s3;
 
     @Value("${aws.bucketName}")
     private String BucketName;
@@ -59,16 +61,15 @@ public class TareaService {
         this.repoTareas.save(tarea);
     }
 
-    public void guardarArchivos(Map<String, MultipartFile> requestFiles, Tarea tarea){
-        requestFiles.forEach((filename, file) -> {
-            tarea.addArchivo(filename);
+    public void guardarArchivos(Map<String, MultipartFile> requestFiles, Tarea tarea) throws IOException {
 
-            try {
-                persistirArchivo(file, tarea.getId());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        for(MultipartFile file: requestFiles.values()){
+            String fileName = file.getOriginalFilename();
+
+            tarea.addArchivo(fileName);
+
+            persistirArchivo(file, tarea.getId());
+        }
 
         actualizarTarea(tarea);
     }
@@ -132,11 +133,54 @@ public class TareaService {
         return tareaAActualizar;
     }
 
-    private void persistirArchivo(MultipartFile file, Long tareaId) throws IOException {
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentType(file.getContentType());
+    public byte[] descargarAchivo(String filename,Tarea tarea) throws IOException {
+        if(!existeArchivoConNombre(filename)){
+            throw new FileNotFoundException("No existe el archivo con el nombre '" + filename +"'");
+        }
 
-        this.s3.putObject(BucketName, file.getName(),file.getInputStream(), metadata);
+        boolean esArchivoDeLaTarea = tarea.getArchivos().contains(filename);
+
+        if(!esArchivoDeLaTarea){
+            throw new FileNotFoundException("El archivo '" + filename +"' no pertenece a la tarea "+ tarea.getTitulo());
+        }
+
+        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+                .bucket(this.BucketName)
+                .key(filename)
+                .build();
+
+        ResponseInputStream<GetObjectResponse> getObjectResponse = s3.getObject(getObjectRequest);
+
+        return getObjectResponse.readAllBytes();
+    }
+
+    private void persistirArchivo(MultipartFile file, Long tareaId) throws IOException {
+        String fileName = file.getOriginalFilename();
+
+        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                .bucket(this.BucketName)
+                .key(fileName)
+                .build();
+
+        this.s3.putObject(putObjectRequest, RequestBody.fromBytes(file.getBytes()));
+    }
+
+    private boolean existeArchivoConNombre(String filename){
+        try{
+            HeadObjectRequest headObjectRequest = HeadObjectRequest.builder()
+                    .key(filename)
+                    .bucket(this.BucketName)
+                    .build();
+
+            this.s3.headObject(headObjectRequest);
+
+            return true;
+        } catch(S3Exception exception){
+            if(exception.statusCode() == 404){
+                return false;
+            }
+        }
+        return false;
     }
 
 }

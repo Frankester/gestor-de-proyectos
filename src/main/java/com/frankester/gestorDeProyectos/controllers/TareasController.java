@@ -11,11 +11,15 @@ import com.frankester.gestorDeProyectos.services.TareaService;
 import com.frankester.gestorDeProyectos.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -43,7 +47,7 @@ public class TareasController {
     }
 
     @PostMapping("/{idTarea}/archivos")
-    public ResponseEntity<?> guardarArchivoNuevo(@PathVariable Long idTarea, @RequestParam("file") Map<String, MultipartFile> requestFiles) throws TareaNotFoundException {
+    public ResponseEntity<?> guardarArchivoNuevo(@PathVariable Long idTarea, @RequestParam("file") Map<String, MultipartFile> requestFiles) throws TareaNotFoundException, IOException {
 
         Tarea tarea = this.tareaService.obtenerTareaConId(idTarea);
 
@@ -51,6 +55,20 @@ public class TareasController {
 
 
         return ResponseEntity.ok("Se agregaron " +requestFiles.size()+ " archivos para la tarea '" +tarea.getTitulo()+ "' con exito");
+    }
+
+    @GetMapping("/{idTarea}/archivos")
+    public ResponseEntity<?> descargarArchivo(@PathVariable Long idTarea, @RequestParam String filename) throws TareaNotFoundException, IOException {
+
+        Tarea tarea = this.tareaService.obtenerTareaConId(idTarea);
+
+        byte[] fileToDownload = this.tareaService.descargarAchivo(filename, tarea);
+
+        Resource fileResource = new ByteArrayResource(fileToDownload);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""+filename+"\"")
+                .body(fileResource);
     }
 
     @PostMapping(path = {"/", ""})

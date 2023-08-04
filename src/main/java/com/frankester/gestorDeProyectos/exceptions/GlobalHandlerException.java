@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -117,6 +119,27 @@ public class GlobalHandlerException {
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     Map<String, String> validationError(QueryMethodParameterConversionException ex){
+
+        Map<String, String> errors = new HashMap<>();
+        errors.put("message", ex.getMessage());
+        return errors;
+    }
+
+
+    @ExceptionHandler(IOException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    Map<String, String> ioException(IOException ex){
+
+        Map<String, String> errors = new HashMap<>();
+        errors.put("message", ex.getMessage());
+        return errors;
+    }
+
+    @ExceptionHandler(FileNotFoundException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    Map<String, String> fileNotFoundException(FileNotFoundException ex){
 
         Map<String, String> errors = new HashMap<>();
         errors.put("message", ex.getMessage());
