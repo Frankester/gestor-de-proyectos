@@ -26,7 +26,7 @@ Modifica el archivo `application.properties` agregando la siguiente informacion 
 La API utiliza el servicio de almacenamiento en la nube de Amazon Web Services (AWS S3) para gestionar la subida de archivos. Para configurar las credenciales de AWS S3, sigue estos pasos:
 
 1. Accede a la Consola de AWS o crea una cuenta si no tienes una
-2. Obtén tus credenciales de acceso (Access Key ID y Secret Access Key) desde la sección de administración de seguridad de AWS.
+2. Obtén tus credenciales de acceso para s3 (Access Key ID y Secret Access Key) desde la sección de credenciales de seguridad en IAM dentro de la seccion de Usuarios (debes agregar un usuario si no lo hiciste).
 3. Abre el archivo application.properties en el directorio raíz del proyecto y agrega las siguientes líneas, reemplazando con tus credenciales:
     ```application.properties
     aws.accessKeyId=<ACCESS_KEY_ID>
