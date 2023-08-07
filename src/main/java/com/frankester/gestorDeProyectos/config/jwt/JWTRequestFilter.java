@@ -1,6 +1,6 @@
 package com.frankester.gestorDeProyectos.config.jwt;
 
-import com.frankester.gestorDeProyectos.services.UserService;
+import com.frankester.gestorDeProyectos.services.UsuarioService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +18,7 @@ import java.io.IOException;
 
 public class JWTRequestFilter extends OncePerRequestFilter {
     @Autowired
-    private UserService userService;
+    private UsuarioService userService;
 
     @Autowired
     private JWTUtils jwtUtil;
@@ -36,7 +36,7 @@ public class JWTRequestFilter extends OncePerRequestFilter {
             if(jwt != null && jwtUtil.isJwtValid(jwt)){
                 String username = jwtUtil.getUsernameFromJwt(jwt);
 
-                UserDetails user = userService.loadUserByUsername(username);
+                UserDetails user = this.userService.loadUserByUsername(username);
 
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         user,null,user.getAuthorities()

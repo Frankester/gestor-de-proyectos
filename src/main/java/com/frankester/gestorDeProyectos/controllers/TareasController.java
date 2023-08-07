@@ -4,11 +4,11 @@ import com.frankester.gestorDeProyectos.exceptions.custom.ProyectoNotFoundExcept
 import com.frankester.gestorDeProyectos.exceptions.custom.TareaNotFoundException;
 import com.frankester.gestorDeProyectos.exceptions.custom.UsuarioNotFoundException;
 import com.frankester.gestorDeProyectos.models.DTOs.TareaRequest;
-import com.frankester.gestorDeProyectos.models.Proyecto;
 import com.frankester.gestorDeProyectos.models.Tarea;
 import com.frankester.gestorDeProyectos.models.Usuario;
+import com.frankester.gestorDeProyectos.services.ArchivosService;
 import com.frankester.gestorDeProyectos.services.TareaService;
-import com.frankester.gestorDeProyectos.services.UserService;
+import com.frankester.gestorDeProyectos.services.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -20,9 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @RepositoryRestController(path = "/tareas")
 public class TareasController {
@@ -32,7 +30,10 @@ public class TareasController {
     public TareaService tareaService;
 
     @Autowired
-    public UserService userService;
+    public UsuarioService userService;
+
+    @Autowired
+    public ArchivosService archivosService;
 
     @DeleteMapping("/{idTarea}")
     public ResponseEntity<?> borrarTarea(@PathVariable Long idTarea) throws TareaNotFoundException {
@@ -40,7 +41,7 @@ public class TareasController {
 
         tarea.setTareaVirgente(false);
 
-        this.tareaService.actualizarTarea(tarea);
+        this.tareaService.actualizarTareaModificada(tarea);
 
         return ResponseEntity.ok("Se elimino la tarea " + tarea.getTitulo() + " correctamente. para el proyecto '" +tarea.getProyecto().getNombre()+ "'");
 
@@ -51,7 +52,7 @@ public class TareasController {
 
         Tarea tarea = this.tareaService.obtenerTareaConId(idTarea);
 
-        this.tareaService.guardarArchivos(requestFiles, tarea);
+        this.archivosService.guardarArchivos(requestFiles, tarea);
 
 
         return ResponseEntity.ok("Se agregaron " +requestFiles.size()+ " archivos para la tarea '" +tarea.getTitulo()+ "' con exito");
@@ -62,7 +63,7 @@ public class TareasController {
 
         Tarea tarea = this.tareaService.obtenerTareaConId(idTarea);
 
-        byte[] fileToDownload = this.tareaService.descargarAchivo(filename, tarea);
+        byte[] fileToDownload = this.archivosService.descargarAchivo(filename, tarea);
 
         Resource fileResource = new ByteArrayResource(fileToDownload);
 
@@ -74,7 +75,7 @@ public class TareasController {
     @PostMapping(path = {"/", ""})
     public ResponseEntity<?> crearTarea(@Valid  @RequestBody TareaRequest request) throws UsuarioNotFoundException, ProyectoNotFoundException {
 
-        Usuario usuario = userService.obtnerUsuarioAutenticado();
+        Usuario usuario = userService.obtenerUsuarioAutenticado();
 
         Tarea nuevaTarea = tareaService.crearTarea(request, usuario);
 
@@ -84,7 +85,7 @@ public class TareasController {
     @PutMapping("/{idTarea}")
     public ResponseEntity<?> actualizarTarea(@PathVariable Long idTarea, @Valid @RequestBody TareaRequest request) throws UsuarioNotFoundException, TareaNotFoundException, ProyectoNotFoundException {
 
-        Usuario usuario = userService.obtnerUsuarioAutenticado();
+        Usuario usuario = userService.obtenerUsuarioAutenticado();
 
         Tarea nuevaTarea = tareaService.actializarTarea(idTarea, request, usuario);
 

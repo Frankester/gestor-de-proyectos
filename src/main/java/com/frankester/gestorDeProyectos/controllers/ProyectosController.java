@@ -9,7 +9,9 @@ import com.frankester.gestorDeProyectos.models.Proyecto;
 import com.frankester.gestorDeProyectos.models.Tarea;
 import com.frankester.gestorDeProyectos.models.Usuario;
 import com.frankester.gestorDeProyectos.models.mensajeria.ChatRoom;
+import com.frankester.gestorDeProyectos.services.PanelDeControlService;
 import com.frankester.gestorDeProyectos.services.ProyectoService;
+import com.frankester.gestorDeProyectos.services.SalaDeChatService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
@@ -21,7 +23,13 @@ import org.springframework.web.bind.annotation.*;
 public class ProyectosController {
 
     @Autowired
-    public ProyectoService proyectoService;
+    private ProyectoService proyectoService;
+
+    @Autowired
+    private SalaDeChatService salaDeChatService;
+
+    @Autowired
+    private PanelDeControlService panelDeControlService;
 
     @DeleteMapping("/{idProyecto}")
     public ResponseEntity<?> borrarProyecto(@PathVariable Long idProyecto) throws ProyectoNotFoundException {
@@ -30,7 +38,7 @@ public class ProyectosController {
 
         proyecto.setProyectoVirgente(false);
 
-        this.proyectoService.actualizarProyecto(proyecto);
+        this.proyectoService.actualizarProyectoModificado(proyecto);
 
         return ResponseEntity.ok("Se elimino el proyecto " + proyecto.getNombre() + " correctamente.");
     }
@@ -41,7 +49,7 @@ public class ProyectosController {
 
         Proyecto proyecto = this.proyectoService.obtenerProyectoConId(idProyecto);
 
-        ChatRoom salaDeChat = this.proyectoService.crearSalaDeChat(proyecto, request);
+        ChatRoom salaDeChat = this.salaDeChatService.crearSalaDeChat(proyecto, request);
 
         return ResponseEntity.ok(salaDeChat);
     }
@@ -51,7 +59,7 @@ public class ProyectosController {
 
         Proyecto proyecto = this.proyectoService.obtenerProyectoConId(idProyecto);
 
-        ChatRoom salaDeChat = this.proyectoService.actualizarSalaDeChat(proyecto, request);
+        ChatRoom salaDeChat = this.salaDeChatService.actualizarSalaDeChat(proyecto, request);
 
         return ResponseEntity.ok(salaDeChat);
     }
@@ -64,12 +72,12 @@ public class ProyectosController {
         PanelDeControl panelDeControl;
 
         if(proyecto.getPanelDeControl() == null){
-            panelDeControl = this.proyectoService.crearPanelDeControl(proyecto);
+            panelDeControl = this.panelDeControlService.crearPanelDeControl(proyecto);
         } else {
-            panelDeControl = this.proyectoService.acutalizarPanelDeControl(proyecto);
+            panelDeControl = this.panelDeControlService.acutalizarPanelDeControl(proyecto);
         }
 
-        this.proyectoService.actualizarProyecto(proyecto);
+        this.proyectoService.actualizarProyectoModificado(proyecto);
 
         return ResponseEntity.ok(panelDeControl);
     }
@@ -77,7 +85,7 @@ public class ProyectosController {
     @PostMapping(path = {"/", ""})
     public ResponseEntity<?> crearProyecto(@Valid @RequestBody ProyectoRequest request) throws ChatRoomAlreadyExistException, UsuarioNotFoundException {
 
-        Proyecto nuevoProyecto = proyectoService.crearProyecto(request);
+        Proyecto nuevoProyecto = this.proyectoService.crearProyecto(request);
 
         return ResponseEntity.ok(nuevoProyecto);
     }
@@ -85,7 +93,7 @@ public class ProyectosController {
     @PutMapping("/{idTarea}")
     public ResponseEntity<?> actualizarProyecto(@PathVariable Long idProyecto, @Valid @RequestBody ProyectoRequest request) throws ProyectoNotFoundException {
 
-        Proyecto nuevoProyecto = proyectoService.actualizarProyecto(idProyecto, request);
+        Proyecto nuevoProyecto = this.proyectoService.actualizarProyecto(idProyecto, request);
 
         return ResponseEntity.ok(nuevoProyecto);
     }

@@ -2,7 +2,7 @@ package com.frankester.gestorDeProyectos.config;
 
 import com.frankester.gestorDeProyectos.config.jwt.JWTAuthEntryPoint;
 import com.frankester.gestorDeProyectos.config.jwt.JWTRequestFilter;
-import com.frankester.gestorDeProyectos.services.UserService;
+import com.frankester.gestorDeProyectos.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +27,7 @@ import java.util.Arrays;
 public class SecurityConfig {
 
     @Autowired
-    private UserService userService;
+    private UsuarioService userService;
 
     @Bean
     public PasswordEncoder passwordEncoder(){
