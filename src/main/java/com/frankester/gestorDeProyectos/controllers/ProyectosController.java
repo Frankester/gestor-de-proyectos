@@ -91,7 +91,7 @@ public class ProyectosController {
     }
 
     @PutMapping("/{idTarea}")
-    public ResponseEntity<?> actualizarProyecto(@PathVariable Long idProyecto, @Valid @RequestBody ProyectoRequest request) throws ProyectoNotFoundException {
+    public ResponseEntity<?> actualizarProyecto(@PathVariable Long idProyecto, @Valid @RequestBody ProyectoRequest request) throws ProyectoNotFoundException, UsuarioNotFoundException, ChatRoomNotFoundException {
 
         Proyecto nuevoProyecto = this.proyectoService.actualizarProyecto(idProyecto, request);
 

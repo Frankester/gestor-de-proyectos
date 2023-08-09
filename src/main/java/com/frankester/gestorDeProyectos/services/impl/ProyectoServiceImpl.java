@@ -1,6 +1,7 @@
 package com.frankester.gestorDeProyectos.services.impl;
 
 import com.frankester.gestorDeProyectos.exceptions.custom.ChatRoomAlreadyExistException;
+import com.frankester.gestorDeProyectos.exceptions.custom.ChatRoomNotFoundException;
 import com.frankester.gestorDeProyectos.exceptions.custom.ProyectoNotFoundException;
 import com.frankester.gestorDeProyectos.exceptions.custom.UsuarioNotFoundException;
 import com.frankester.gestorDeProyectos.models.DTOs.ProyectoRequest;
@@ -55,19 +56,11 @@ public class ProyectoServiceImpl implements ProyectoService {
 
         this.salaDeChatService.crearSalaDeChat(nuevoProyecto, request.getSalaDeChat());
 
-
-        request.getMiembros().forEach((miembro) -> {
-
-            Usuario userMiembro = null;
-            try {
-                userMiembro = this.userService.obtenerUsuarioPorUsername(miembro);
-            } catch (UsuarioNotFoundException e) {
-                throw new RuntimeException(e);
-            }
+        for( String miembro:request.getMiembros()){
+            Usuario userMiembro = this.userService.obtenerUsuarioPorUsername(miembro);
 
             nuevoProyecto.addMiembro(userMiembro);
-
-        });
+        }
 
         actualizarProyectoModificado(nuevoProyecto);
 
@@ -75,7 +68,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     }
 
     @Override
-    public Proyecto actualizarProyecto(Long proyectoId, ProyectoRequest request) throws ProyectoNotFoundException {
+    public Proyecto actualizarProyecto(Long proyectoId, ProyectoRequest request) throws ProyectoNotFoundException, UsuarioNotFoundException, ChatRoomNotFoundException {
         Proyecto proyecto = obtenerProyectoConId(proyectoId);
 
         proyecto.setNombre(request.getNombre());
@@ -83,16 +76,12 @@ public class ProyectoServiceImpl implements ProyectoService {
         proyecto.setFechaLimite(request.getFechaLimite());
 
 
-        request.getMiembros().forEach((miembro) -> {
-            Usuario userMiembro = null;
-            try {
-                userMiembro = this.userService.obtenerUsuarioPorUsername(miembro);
-            } catch (UsuarioNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-
+        for(String miembro: request.getMiembros()){
+            Usuario userMiembro = this.userService.obtenerUsuarioPorUsername(miembro);
             proyecto.addMiembro(userMiembro);
-        });
+        }
+
+        this.salaDeChatService.actualizarSalaDeChat(proyecto, request.getSalaDeChat());
 
         actualizarProyectoModificado(proyecto);
 

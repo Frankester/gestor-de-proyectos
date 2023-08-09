@@ -1,6 +1,7 @@
 package com.frankester.gestorDeProyectos.services;
 
 import com.frankester.gestorDeProyectos.exceptions.custom.ChatRoomAlreadyExistException;
+import com.frankester.gestorDeProyectos.exceptions.custom.ChatRoomNotFoundException;
 import com.frankester.gestorDeProyectos.exceptions.custom.ProyectoNotFoundException;
 import com.frankester.gestorDeProyectos.exceptions.custom.UsuarioNotFoundException;
 import com.frankester.gestorDeProyectos.models.DTOs.ProyectoRequest;
@@ -14,7 +15,7 @@ public interface ProyectoService {
 
     public Proyecto crearProyecto(ProyectoRequest request) throws UsuarioNotFoundException, ChatRoomAlreadyExistException;
 
-    public Proyecto actualizarProyecto(Long proyectoId, ProyectoRequest request) throws ProyectoNotFoundException;
+    public Proyecto actualizarProyecto(Long proyectoId, ProyectoRequest request) throws ProyectoNotFoundException, UsuarioNotFoundException, ChatRoomNotFoundException;
 
     public void actualizarProyectoModificado(Proyecto proyecto);
 
