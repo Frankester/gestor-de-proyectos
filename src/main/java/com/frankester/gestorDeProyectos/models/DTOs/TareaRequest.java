@@ -11,6 +11,7 @@ import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -40,4 +41,7 @@ public class TareaRequest {
     @NotNull(message = "Campo requerido")
     private Long idProyecto;
 
+    public TareaRequest() {
+        this.comentarios = new ArrayList<>();
+    }
 }
