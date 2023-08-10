@@ -12,6 +12,7 @@ import com.frankester.gestorDeProyectos.models.Tarea;
 import com.frankester.gestorDeProyectos.models.Usuario;
 import com.frankester.gestorDeProyectos.models.estados.EstadoTarea;
 import com.frankester.gestorDeProyectos.models.estados.Prioridad;
+import com.frankester.gestorDeProyectos.models.mensajeria.Mensaje;
 import com.frankester.gestorDeProyectos.repositories.RepoProyectos;
 import com.frankester.gestorDeProyectos.repositories.RepoTareas;
 import com.frankester.gestorDeProyectos.repositories.RepoUsuarios;
@@ -30,6 +31,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -99,8 +101,32 @@ public class TareasServiceTest {
 
         Tarea tareaCreada = this.tareaService.crearTarea(request,usuarioCreadorDeLaTarea);
 
-        assertTarea(tareaCreada, request);
+        assertTarea(tareaCreada, request, usuarioCreadorDeLaTarea);
     }
+
+    @Test
+    public void se_puede_agregar_comentarios_al_crear_la_tarea() throws UsuarioNotFoundException, ProyectoNotFoundException {
+        TareaRequest request = new TareaRequest();
+        request.setTitulo("implementar x cosa");
+        request.setFechaLimite(LocalDate.of(2040, Month.SEPTEMBER,20 ));
+        request.setEstado(EstadoTarea.PENDIENTE);
+        request.setUsername("user2");
+        request.setPrioridad(Prioridad.ALTA);
+        request.setIdProyecto(1L);
+        request.setComentarios(List.of("un comentario cualquiera", "y otro"));
+
+        when(this.repoProyectos.findById(1L)).thenReturn(Optional.of(new Proyecto()));
+        when(this.repoProyectos.save(any(Proyecto.class))).thenReturn(new Proyecto());
+        when(this.repoTareas.save(any(Tarea.class))).thenReturn(new Tarea());
+
+        Usuario usuarioCreadorDeLaTarea = new Usuario();
+        usuarioCreadorDeLaTarea.setUsername("user1");
+
+        Tarea tareaCreada = this.tareaService.crearTarea(request,usuarioCreadorDeLaTarea);
+
+        assertTarea(tareaCreada, request, usuarioCreadorDeLaTarea);
+    }
+
 
     @Test
     public void cuando_actualizo_una_tarea_debe_devolver_la_tarea_actualizada() throws UsuarioNotFoundException, ProyectoNotFoundException, TareaNotFoundException {
@@ -123,7 +149,32 @@ public class TareasServiceTest {
 
         Tarea tareaActualizada = this.tareaService.actializarTarea(1L,request,usuarioCreadorDeLaTarea);
 
-        assertTarea(tareaActualizada, request);
+        assertTarea(tareaActualizada, request, usuarioCreadorDeLaTarea);
+    }
+
+    @Test
+    public void se_puede_agregar_comentarios_al_actualizar_la_tarea() throws UsuarioNotFoundException, ProyectoNotFoundException, TareaNotFoundException {
+        TareaRequest request = new TareaRequest();
+        request.setTitulo("implementar x cosa");
+        request.setFechaLimite(LocalDate.of(2040, Month.SEPTEMBER,20 ));
+        request.setEstado(EstadoTarea.PENDIENTE);
+        request.setUsername("user2");
+        request.setPrioridad(Prioridad.ALTA);
+        request.setIdProyecto(1L);
+        request.setComentarios(List.of("comentario 1", "comentario 2", "comentario 3"));
+
+        when(this.repoProyectos.findById(1L)).thenReturn(Optional.of(new Proyecto()));
+        when(this.repoProyectos.save(any(Proyecto.class))).thenReturn(new Proyecto());
+
+        when(this.repoTareas.findById(1L)).thenReturn(Optional.of(new Tarea()));
+        when(this.repoTareas.save(any(Tarea.class))).thenReturn(new Tarea());
+
+        Usuario usuarioCreadorDeLaTarea = new Usuario();
+        usuarioCreadorDeLaTarea.setUsername("user1");
+
+        Tarea tareaActualizada = this.tareaService.actializarTarea(1L,request,usuarioCreadorDeLaTarea);
+
+        assertTarea(tareaActualizada, request, usuarioCreadorDeLaTarea);
     }
 
     @Test
@@ -245,12 +296,21 @@ public class TareasServiceTest {
     }
 
 
-    private void assertTarea(Tarea tarea, TareaRequest request){
+    private void assertTarea(Tarea tarea, TareaRequest request, Usuario usuarioCraedorDeLaTarea){
         assertThat(tarea.getTitulo()).isEqualTo(request.getTitulo());
         assertThat(tarea.getEstado()).isEqualTo(request.getEstado());
         assertThat(tarea.getPrioridad()).isEqualTo(request.getPrioridad());
         assertThat(tarea.getFechaLimite()).isEqualTo(request.getFechaLimite());
         assertThat(tarea.getUsuairoAsignado().getUsername()).isEqualTo(request.getUsername());
+        assertThat(tarea.getComentarios().size()).isEqualTo(request.getComentarios().size());
+
+        for(String comentario: request.getComentarios()){
+            Mensaje comentarioCreado = new Mensaje();
+            comentarioCreado.setMensaje(comentario);
+            comentarioCreado.setUsuario(usuarioCraedorDeLaTarea);
+
+            assertThat(tarea.getComentarios()).contains(comentarioCreado);
+        }
 
     }
 

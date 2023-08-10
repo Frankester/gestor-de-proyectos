@@ -1,5 +1,6 @@
 package com.frankester.gestorDeProyectos.services.impl;
 
+import com.frankester.gestorDeProyectos.exceptions.custom.UserAlreadyExistsException;
 import com.frankester.gestorDeProyectos.exceptions.custom.UsuarioNotFoundException;
 import com.frankester.gestorDeProyectos.models.DTOs.AuthDTO;
 import com.frankester.gestorDeProyectos.models.Usuario;
