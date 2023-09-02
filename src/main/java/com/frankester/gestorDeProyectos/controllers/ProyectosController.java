@@ -65,7 +65,7 @@ public class ProyectosController {
     }
 
     @GetMapping("/{idProyecto}/panelDeControl")
-    public ResponseEntity<?> obtenerPanelDeControl(@PathVariable Long idProyecto) throws ProyectoNotFoundException {
+    public ResponseEntity<?> obtenerPanelDeControl(@PathVariable Long idProyecto) throws ProyectoNotFoundException, PanelDeControlNotFoundException {
 
         Proyecto proyecto = this.proyectoService.obtenerProyectoConId(idProyecto);
 

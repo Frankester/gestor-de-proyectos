@@ -145,4 +145,15 @@ public class GlobalHandlerException {
         errors.put("message", ex.getMessage());
         return errors;
     }
+
+
+    @ExceptionHandler(PanelDeControlNotFoundException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    Map<String, String> panelDeControlNotFoundException(PanelDeControlNotFoundException ex){
+
+        Map<String, String> errors = new HashMap<>();
+        errors.put("message", ex.getMessage());
+        return errors;
+    }
 }

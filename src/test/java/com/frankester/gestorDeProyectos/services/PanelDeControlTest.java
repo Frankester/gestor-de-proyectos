@@ -1,5 +1,6 @@
 package com.frankester.gestorDeProyectos.services;
 
+import com.frankester.gestorDeProyectos.exceptions.custom.PanelDeControlNotFoundException;
 import com.frankester.gestorDeProyectos.exceptions.custom.ProyectoNotFoundException;
 import com.frankester.gestorDeProyectos.models.PanelDeControl;
 import com.frankester.gestorDeProyectos.models.Proyecto;
@@ -57,7 +58,7 @@ public class PanelDeControlTest {
 
 
     @Test
-    public void cuando_actualizo_un_panel_de_control_debe_devolver_el_panel_de_control_actualizado(){
+    public void cuando_actualizo_un_panel_de_control_debe_devolver_el_panel_de_control_actualizado() throws PanelDeControlNotFoundException {
 
         Proyecto proyectoMock = mock(Proyecto.class);
 
@@ -74,4 +75,26 @@ public class PanelDeControlTest {
         assertThat(panelDeControlActualizado.getTareasPendientes().size()).isEqualTo(0);
     }
 
+    @Test
+    public void no_se_puede_actualizar_un_panel_de_control_de_un_proyecto_sin_panel_de_control(){
+
+        Proyecto proyectoMock = mock(Proyecto.class);
+
+        when(proyectoMock.getNombre()).thenReturn("The Manhattan Project");
+        when(proyectoMock.calcularProgresoDelProyecto()).thenReturn(12F);
+        when(proyectoMock.obtenerAlertasDelProyecto()).thenReturn(new ArrayList<>());
+        when(proyectoMock.obtenerTareasPendientes()).thenReturn(new ArrayList<>());
+
+        when(proyectoMock.getPanelDeControl()).thenReturn(null);
+
+
+        PanelDeControlNotFoundException exception = assertThrows(PanelDeControlNotFoundException.class, ()->{
+            this.panelDeControlService.acutalizarPanelDeControl(proyectoMock);
+        });
+
+        String mensajeEsperado = "No se encontro el panel de control para el proyecto 'The Manhattan Project'";
+        String mensajeActual = exception.getMessage();
+
+        assertThat(mensajeActual).isEqualTo(mensajeEsperado);
+    }
 }

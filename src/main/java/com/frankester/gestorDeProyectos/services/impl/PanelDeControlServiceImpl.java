@@ -1,5 +1,6 @@
 package com.frankester.gestorDeProyectos.services.impl;
 
+import com.frankester.gestorDeProyectos.exceptions.custom.PanelDeControlNotFoundException;
 import com.frankester.gestorDeProyectos.models.PanelDeControl;
 import com.frankester.gestorDeProyectos.models.Proyecto;
 import com.frankester.gestorDeProyectos.services.PanelDeControlService;
@@ -19,8 +20,12 @@ public class PanelDeControlServiceImpl implements PanelDeControlService {
     }
 
     @Override
-    public PanelDeControl acutalizarPanelDeControl(Proyecto proyecto) {
+    public PanelDeControl acutalizarPanelDeControl(Proyecto proyecto) throws PanelDeControlNotFoundException {
         PanelDeControl panelDeControl = proyecto.getPanelDeControl();
+
+        if(panelDeControl == null){
+            throw new PanelDeControlNotFoundException("No se encontro el panel de control para el proyecto '"+proyecto.getNombre()+"'");
+        }
 
         panelDeControl.setProgresoDelProyecto(proyecto.calcularProgresoDelProyecto());
         panelDeControl.setAlertas(proyecto.obtenerAlertasDelProyecto());
