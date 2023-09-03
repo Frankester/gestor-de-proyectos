@@ -39,7 +39,7 @@ public class AuthController {
     public ResponseEntity<Object> verifyUserEmail(@Valid @RequestBody VerificationCodeRequest request) {
         // Verificar si el usuario ya existe
         if (!this.userService.isUserExists(request.getEmail())) {
-            return ResponseEntity.badRequest().body("El usuario no está registrado.");
+            return ResponseEntity.badRequest().body("El usuario no está registrado en el sistema.");
         }
 
         // Realizar la verificacion del codigo de verificación
