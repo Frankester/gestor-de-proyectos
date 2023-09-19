@@ -13,7 +13,7 @@ import java.util.Optional;
 @RepositoryRestResource(path="usuarios", exported = false)
 public interface RepoUsuarios extends JpaRepository<Usuario, String> {
 
-    Usuario findByEmail(String email);
+    Optional<Usuario> findByEmail(String email);
 
     Optional<Usuario> findByUsername(String username);
 

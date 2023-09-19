@@ -57,8 +57,7 @@ public class TareasControllerTest {
     public void cuando_un_usuario_crea_una_tarea_se_debe_llamar_al_servicio_correcto() throws ProyectoNotFoundException, UsuarioNotFoundException {
         TareaRequest request = this.mockTareaRequest();
 
-        Usuario userOwner = new Usuario();
-        userOwner.setUsername("pepe2");
+        Usuario userOwner = this.mockUserOwner();
 
         when(this.userService.obtenerUsuarioAutenticado()).thenReturn(userOwner);
 
@@ -75,8 +74,7 @@ public class TareasControllerTest {
     public void cuando_un_usuario_actualiza_una_tarea_se_debe_llamar_al_servicio_correcto() throws ProyectoNotFoundException, UsuarioNotFoundException, TareaNotFoundException {
         TareaRequest request = this.mockTareaRequest();
 
-        Usuario userOwner = new Usuario();
-        userOwner.setUsername("pepe2");
+        Usuario userOwner = this.mockUserOwner();
 
         when(this.userService.obtenerUsuarioAutenticado()).thenReturn(userOwner);
 
@@ -152,10 +150,17 @@ public class TareasControllerTest {
         request.setPrioridad(Prioridad.ALTA);
         request.setEstado(EstadoTarea.PENDIENTE);
         request.setIdProyecto(1L);
-        request.setComentarios(List.of("No hagas ...", "Puedes apoyarte de x recurso"));
+        request.setComentarios(List.of("No hagas ...", "Podes apoyarte de x recurso"));
         request.setFechaLimite(LocalDate.of(2023, 10, 12));
 
         return request;
+    }
+
+    private Usuario mockUserOwner(){
+        Usuario userOwner = new Usuario();
+        userOwner.setUsername("pepe2");
+
+        return userOwner;
     }
 
 }

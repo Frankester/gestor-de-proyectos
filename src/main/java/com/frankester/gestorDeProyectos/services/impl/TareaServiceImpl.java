@@ -72,7 +72,7 @@ public class TareaServiceImpl implements TareaService {
             nuevaTarea.addComentario(comentario);
         }));
 
-        actualizarTareaModificada(nuevaTarea);
+        guardarTareaModificada(nuevaTarea);
 
         return nuevaTarea;
     }
@@ -102,13 +102,13 @@ public class TareaServiceImpl implements TareaService {
             tareaAActualizar.addComentario(comentario);
         }));
 
-        actualizarTareaModificada(tareaAActualizar);
+        guardarTareaModificada(tareaAActualizar);
 
         return tareaAActualizar;
     }
 
 
-    public void actualizarTareaModificada(Tarea tarea){
+    public void guardarTareaModificada(Tarea tarea){
         this.repoTareas.save(tarea);
     }
 

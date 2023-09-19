@@ -17,4 +17,10 @@ public interface UsuarioService extends UserDetailsService {
 
     public Usuario obtenerUsuarioPorUsername(String username) throws UsuarioNotFoundException ;
 
+    public Usuario obtenerUsuarioPorEmail(String email) throws UsuarioNotFoundException;
+
+    public void guardarUsuario(Usuario usuario) ;
+
+    public void eliminarUsuario(Usuario usuario) ;
+
 }

@@ -1,9 +1,10 @@
 package com.frankester.gestorDeProyectos.controllers;
 
-import com.frankester.gestorDeProyectos.exceptions.custom.UserAlreadyExistsException;
+import com.frankester.gestorDeProyectos.exceptions.custom.*;
 import com.frankester.gestorDeProyectos.models.DTOs.AuthDTO;
 import com.frankester.gestorDeProyectos.models.DTOs.JwtResponse;
 import com.frankester.gestorDeProyectos.models.DTOs.VerificationCodeRequest;
+import com.frankester.gestorDeProyectos.models.Usuario;
 import com.frankester.gestorDeProyectos.services.AuthService;
 import com.frankester.gestorDeProyectos.services.CodigoDeVerificacionService;
 import com.frankester.gestorDeProyectos.services.UsuarioService;
@@ -29,21 +30,24 @@ public class AuthController {
 
     @PostMapping("/auth/register")
     public ResponseEntity<Object> registerUser(@Valid @RequestBody AuthDTO request) throws UserAlreadyExistsException {
-        // Realizar el registro del usuario y generar el código de verificación, y enviar el mail
+        // Realizar el registro del usuario y generar el código de verificación para enviarlo el mail del usuario
         this.authService.register(request);
 
         return ResponseEntity.ok("Usuario registrado con éxito, verifica tu correo.");
     }
 
     @PostMapping("/auth/verifycode")
-    public ResponseEntity<Object> verifyUserEmail(@Valid @RequestBody VerificationCodeRequest request) {
-        // Verificar si el usuario ya existe
-        if (!this.userService.isUserExists(request.getEmail())) {
-            return ResponseEntity.badRequest().body("El usuario no está registrado en el sistema.");
+    public ResponseEntity<Object> verifyUserEmail(@Valid @RequestBody VerificationCodeRequest request) throws UsuarioNotFoundException, VerificationCodeTriesExaustedException, VerificationCodeInvalidCodeException, VerificationCodeExpirationException {
+
+        Usuario usuario = this.userService.obtenerUsuarioPorEmail(request.getEmail());
+
+        if(usuario.getIsEmailVerificated()){
+            return ResponseEntity.ok("El mail '"+ usuario.getEmail() +"' ya fue verificado con éxito");
         }
 
-        // Realizar la verificacion del codigo de verificación
-        return this.codigoDeVerificacionService.verifyCode(request.getEmail(), request.getVerificationCode());
+        this.codigoDeVerificacionService.verifyCode(usuario, request.getVerificationCode());
+
+        return ResponseEntity.ok("Email del usuario '"+ usuario.getUsername() +"' se verifico con éxito") ;
     }
 
     @PostMapping("/auth/login")

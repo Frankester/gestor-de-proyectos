@@ -106,4 +106,25 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         return userOp.get();
     }
+
+    @Override
+    public Usuario obtenerUsuarioPorEmail(String email) throws UsuarioNotFoundException {
+        Optional<Usuario> usuarioOp = this.repoUsuarios.findByEmail(email);
+
+        if(usuarioOp.isEmpty()){
+            throw new UsuarioNotFoundException("No existe un usuario con el mail: '" +email+ "'");
+        }
+
+        return usuarioOp.get();
+    }
+
+    @Override
+    public void guardarUsuario(Usuario usuario) {
+        this.repoUsuarios.save(usuario);
+    }
+
+    @Override
+    public void eliminarUsuario(Usuario usuario) {
+        this.repoUsuarios.delete(usuario);
+    }
 }

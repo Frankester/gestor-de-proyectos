@@ -41,7 +41,7 @@ public class TareasController {
 
         tarea.setTareaVirgente(false);
 
-        this.tareaService.actualizarTareaModificada(tarea);
+        this.tareaService.guardarTareaModificada(tarea);
 
         return ResponseEntity.ok("Se elimino la tarea " + tarea.getTitulo() + " correctamente. para el proyecto '" +tarea.getProyecto().getNombre()+ "'");
 

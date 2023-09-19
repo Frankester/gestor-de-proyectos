@@ -36,10 +36,10 @@ public class ArchivosServiceImpl implements ArchivosService {
 
             tarea.addArchivo(fileName);
 
-            persistirArchivoReal(file);
+            guardarArchivoRealEnLaNube(file);
         }
 
-        this.tareaService.actualizarTareaModificada(tarea);
+        this.tareaService.guardarTareaModificada(tarea);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class ArchivosServiceImpl implements ArchivosService {
         return getObjectResponse.readAllBytes();
     }
 
-    private void persistirArchivoReal(MultipartFile file) throws IOException {
+    private void guardarArchivoRealEnLaNube(MultipartFile file) throws IOException {
         String fileName = file.getOriginalFilename();
 
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()

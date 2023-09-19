@@ -1,9 +1,10 @@
 package com.frankester.gestorDeProyectos.controllers;
 
-import com.frankester.gestorDeProyectos.exceptions.custom.UserAlreadyExistsException;
+import com.frankester.gestorDeProyectos.exceptions.custom.*;
 import com.frankester.gestorDeProyectos.models.DTOs.AuthDTO;
 import com.frankester.gestorDeProyectos.models.DTOs.JwtResponse;
 import com.frankester.gestorDeProyectos.models.DTOs.VerificationCodeRequest;
+import com.frankester.gestorDeProyectos.models.Usuario;
 import com.frankester.gestorDeProyectos.services.AuthService;
 import com.frankester.gestorDeProyectos.services.CodigoDeVerificacionService;
 import com.frankester.gestorDeProyectos.services.ProyectoService;
@@ -83,12 +84,11 @@ public class AuthControllerTest {
 
 
     @Test
-    public void cuando_un_usuario_verifica_su_mail_se_debe_llamar_al_servicio_correcto() {
+    public void cuando_un_usuario_verifica_su_mail_se_debe_llamar_al_servicio_correcto() throws VerificationCodeTriesExaustedException, VerificationCodeInvalidCodeException, VerificationCodeExpirationException, UsuarioNotFoundException {
         VerificationCodeRequest request = this.mockVerifyCodeRequest();
+        Usuario usuarioMock = this.mockUsuario();
 
-        when(this.userService.isUserExists(request.getEmail())).thenReturn(true);
-
-        when(this.codigoDeVerificacionService.verifyCode(request.getEmail(), request.getVerificationCode())).thenReturn(ResponseEntity.ok("Email del usuario 'pepe' se verifico con éxito"));
+        when(this.userService.obtenerUsuarioPorEmail(request.getEmail())).thenReturn(usuarioMock);
 
         ResponseEntity<Object> responseEntity = this.authController.verifyUserEmail(request);
 
@@ -97,16 +97,17 @@ public class AuthControllerTest {
     }
 
     @Test
-    public void cuando_un_usuario_verifica_su_mail_debe_debe_existir_en_el_sistema() {
+    public void cuando_un_usuario_verifica_su_mail_no_puede_volver_a_verificarse() throws UsuarioNotFoundException, VerificationCodeTriesExaustedException, VerificationCodeInvalidCodeException, VerificationCodeExpirationException {
         VerificationCodeRequest request = this.mockVerifyCodeRequest();
+        Usuario usuarioMock = this.mockUsuario();
+        usuarioMock.setIsEmailVerificated(true);
 
-        when(this.userService.isUserExists(request.getEmail())).thenReturn(false);
-
+        when(this.userService.obtenerUsuarioPorEmail(request.getEmail())).thenReturn(usuarioMock);
 
         ResponseEntity<Object> responseEntity = this.authController.verifyUserEmail(request);
 
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(400));
-        assertThat(responseEntity.getBody()).isEqualTo("El usuario no está registrado en el sistema.");
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(200));
+        assertThat(responseEntity.getBody()).isEqualTo("El mail '"+ usuarioMock.getEmail() +"' ya fue verificado con éxito");
     }
 
     private AuthDTO mockAuthRequest(){
@@ -120,10 +121,18 @@ public class AuthControllerTest {
 
     private VerificationCodeRequest mockVerifyCodeRequest(){
         VerificationCodeRequest request = new VerificationCodeRequest();
-        request.setEmail("hola@gmail.com");
+        request.setEmail("pepe@gmail.com");
         request.setVerificationCode("1234-code");
 
         return request;
+    }
+
+    private Usuario mockUsuario(){
+        Usuario usuarioMock = new Usuario();
+        usuarioMock.setUsername("pepe");
+        usuarioMock.setEmail("pepe@gmail.com");
+
+        return usuarioMock;
     }
 
 }

@@ -156,4 +156,35 @@ public class GlobalHandlerException {
         errors.put("message", ex.getMessage());
         return errors;
     }
+
+    @ExceptionHandler(VerificationCodeTriesExaustedException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    Map<String, String> verificationCodeTriesExaustedException(VerificationCodeTriesExaustedException ex){
+
+        Map<String, String> errors = new HashMap<>();
+        errors.put("message", ex.getMessage());
+        return errors;
+    }
+
+    @ExceptionHandler(VerificationCodeInvalidCodeException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    Map<String, String> verificationCodeInvalidCodeException(VerificationCodeInvalidCodeException ex){
+
+        Map<String, String> errors = new HashMap<>();
+        errors.put("message", ex.getMessage());
+        return errors;
+    }
+
+    @ExceptionHandler(VerificationCodeExpirationException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    Map<String, String> verificationCodeExpirationException(VerificationCodeExpirationException ex) {
+
+        Map<String, String> errors = new HashMap<>();
+        errors.put("message", ex.getMessage());
+        return errors;
+    }
+
 }

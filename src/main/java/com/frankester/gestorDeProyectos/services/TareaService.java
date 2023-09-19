@@ -16,5 +16,5 @@ public interface TareaService {
 
     public Tarea actializarTarea(Long idTarea, TareaRequest tareaRequest, Usuario usuarioDelCreadorDeLaTarea) throws TareaNotFoundException, UsuarioNotFoundException, ProyectoNotFoundException ;
 
-    public void actualizarTareaModificada(Tarea tarea);
+    public void guardarTareaModificada(Tarea tarea);
 }
