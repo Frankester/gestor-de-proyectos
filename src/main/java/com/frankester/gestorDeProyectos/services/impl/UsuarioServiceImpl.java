@@ -63,7 +63,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public Boolean isUserExists(String email){
-        return this.repoUsuarios.findByEmail(email) != null;
+        return this.repoUsuarios.findByEmail(email).isPresent();
     }
 
     @Override

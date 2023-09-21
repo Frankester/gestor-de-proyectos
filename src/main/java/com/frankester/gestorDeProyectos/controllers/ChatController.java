@@ -9,6 +9,7 @@ import com.frankester.gestorDeProyectos.models.mensajeria.Mensaje;
 import com.frankester.gestorDeProyectos.models.mensajeria.MensajeDeChat;
 import com.frankester.gestorDeProyectos.repositories.RepoProyectos;
 import com.frankester.gestorDeProyectos.services.ChatService;
+import com.frankester.gestorDeProyectos.services.ProyectoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -19,26 +20,27 @@ import java.util.Optional;
 @Controller
 public class ChatController {
 
-    @Autowired
-    public ChatService chatService;
+
+    private ChatService chatService;
+
+
+    private ProyectoService proyectoService;
+
 
     @Autowired
-    public RepoProyectos repoProyectos;
+    public ChatController(ChatService chatService, ProyectoService proyectoService) {
+        this.chatService = chatService;
+        this.proyectoService = proyectoService;
+    }
 
     @MessageMapping("/chat/{projectId}")
     public void sendMessage(@DestinationVariable Long projectId, MensajeDeChat message) throws ProyectoNotFoundException, UsuarioNotFoundException {
 
-        Optional<Proyecto> proyectoOp = this.repoProyectos.findById(projectId);
-
-        if(proyectoOp.isEmpty()){
-            throw new ProyectoNotFoundException("No se encontro un proyecto con id: "+ projectId);
-        }
-
-        Proyecto proyecto = proyectoOp.get();
+        Proyecto proyecto = this.proyectoService.obtenerProyectoConId(projectId);
 
         Optional<Usuario> userOp = proyecto
                 .getMiembros().stream()
-                .filter(mimebro -> mimebro.getUsername().equals(message.getUsername()))
+                .filter(miembro -> miembro.getUsername().equals(message.getUsername()))
                 .findFirst();
 
         if(userOp.isEmpty()){
@@ -54,8 +56,8 @@ public class ChatController {
         ChatRoom chatRoom = proyecto.getSalaDeChat();
         chatRoom.addMensaje(mensajeAGuardar);
 
-        repoProyectos.save(proyecto);
+        this.proyectoService.actualizarProyectoModificado(proyecto);
 
-        chatService.sendMessageToUsers(message, proyecto.getMiembros());
+        this.chatService.sendMessageToUsers(message, proyecto.getMiembros());
     }
 }
