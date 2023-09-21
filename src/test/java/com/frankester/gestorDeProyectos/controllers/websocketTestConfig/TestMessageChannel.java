@@ -1,4 +1,4 @@
-package com.frankester.gestorDeProyectos.controllers.securityTestConfig;
+package com.frankester.gestorDeProyectos.controllers.websocketTestConfig;
 
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.AbstractSubscribableChannel;

@@ -2,8 +2,7 @@ package com.frankester.gestorDeProyectos.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.frankester.gestorDeProyectos.controllers.securityTestConfig.TestMessageChannel;
-import com.frankester.gestorDeProyectos.controllers.securityTestConfig.WithMockUser;
+import com.frankester.gestorDeProyectos.controllers.websocketTestConfig.TestMessageChannel;
 import com.frankester.gestorDeProyectos.exceptions.custom.ProyectoNotFoundException;
 import com.frankester.gestorDeProyectos.models.Proyecto;
 import com.frankester.gestorDeProyectos.models.Usuario;
@@ -15,8 +14,6 @@ import com.frankester.gestorDeProyectos.services.ProyectoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
-import org.mockito.InjectMocks;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.support.StaticApplicationContext;
@@ -80,7 +77,6 @@ public class ChatControllerTest {
     }
 
 
-    @WithMockUser
     @Test
     public void usuarios_pueden_enviar_mensajes_a_miembros_del_proyecto() throws ExecutionException, InterruptedException, TimeoutException, ProyectoNotFoundException, JsonProcessingException {
         Usuario usuario = this.mockUsuario();
