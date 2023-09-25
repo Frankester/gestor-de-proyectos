@@ -19,71 +19,7 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalHandlerException {
 
-    @ExceptionHandler(ChatRoomAlreadyExistException.class)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    Map<String, String> chatRoomAlreadyExistException(ChatRoomAlreadyExistException ex){
-
-        Map<String, String> errorMessage = new HashMap<>();
-
-        errorMessage.put("message", ex.getLocalizedMessage());
-
-        return errorMessage;
-    }
-
-    @ExceptionHandler(ChatRoomNotFoundException.class)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    Map<String, String> chatRoomNotFoundException(ChatRoomNotFoundException ex){
-
-        Map<String, String> errorMessage = new HashMap<>();
-
-        errorMessage.put("message", ex.getLocalizedMessage());
-
-        return errorMessage;
-    }
-
-    @ExceptionHandler(ProyectoNotFoundException.class)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    Map<String, String> proyectoNotFoundException(ProyectoNotFoundException ex){
-
-        Map<String, String> errorMessage = new HashMap<>();
-
-        errorMessage.put("message", ex.getLocalizedMessage());
-
-        return errorMessage;
-    }
-
-    @ExceptionHandler(TareaNotFoundException.class)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    Map<String, String> tareaNotFoundException(TareaNotFoundException ex){
-
-        Map<String, String> errorMessage = new HashMap<>();
-
-        errorMessage.put("message", ex.getLocalizedMessage());
-
-        return errorMessage;
-    }
-
-    @ExceptionHandler(UserAlreadyExistsException.class)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    Map<String, String> userAlreadyExistsException(UserAlreadyExistsException ex){
-
-        Map<String, String> errorMessage = new HashMap<>();
-
-        errorMessage.put("message", ex.getLocalizedMessage());
-
-        return errorMessage;
-    }
-
-    @ExceptionHandler(UsuarioNotFoundException.class)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    Map<String, String> usuarioNotFoundException(UsuarioNotFoundException ex){
-
+    Map<String, String> handlingErrorException(Throwable ex){
         Map<String, String> errorMessage = new HashMap<>();
 
         errorMessage.put("message", ex.getLocalizedMessage());
@@ -95,14 +31,62 @@ public class GlobalHandlerException {
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     Map<String, String> validationError(MethodArgumentNotValidException ex){
-
         Map<String, String> errors = new HashMap<>();
+
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
+
             errors.put(fieldName, errorMessage);
         });
         return errors;
+    }
+
+    @ExceptionHandler(ChatRoomAlreadyExistException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    Map<String, String> chatRoomAlreadyExistException(ChatRoomAlreadyExistException ex){
+       return this.handlingErrorException(ex);
+    }
+
+    @ExceptionHandler(ChatRoomNotFoundException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    Map<String, String> chatRoomNotFoundException(ChatRoomNotFoundException ex){
+
+        return this.handlingErrorException(ex);
+    }
+
+    @ExceptionHandler(ProyectoNotFoundException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    Map<String, String> proyectoNotFoundException(ProyectoNotFoundException ex){
+
+        return this.handlingErrorException(ex);
+    }
+
+    @ExceptionHandler(TareaNotFoundException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    Map<String, String> tareaNotFoundException(TareaNotFoundException ex){
+
+        return this.handlingErrorException(ex);
+    }
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    Map<String, String> userAlreadyExistsException(UserAlreadyExistsException ex){
+
+        return this.handlingErrorException(ex);
+    }
+
+    @ExceptionHandler(UsuarioNotFoundException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    Map<String, String> usuarioNotFoundException(UsuarioNotFoundException ex){
+
+        return this.handlingErrorException(ex);
     }
 
     @ExceptionHandler(InvalidDataAccessApiUsageException.class)
@@ -110,9 +94,7 @@ public class GlobalHandlerException {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     Map<String, String> validationError(InvalidDataAccessApiUsageException ex){
 
-        Map<String, String> errors = new HashMap<>();
-        errors.put("message", ex.getLocalizedMessage());
-        return errors;
+        return this.handlingErrorException(ex);
     }
 
     @ExceptionHandler(QueryMethodParameterConversionException.class)
@@ -120,9 +102,7 @@ public class GlobalHandlerException {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     Map<String, String> validationError(QueryMethodParameterConversionException ex){
 
-        Map<String, String> errors = new HashMap<>();
-        errors.put("message", ex.getMessage());
-        return errors;
+        return this.handlingErrorException(ex);
     }
 
 
@@ -131,9 +111,7 @@ public class GlobalHandlerException {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     Map<String, String> ioException(IOException ex){
 
-        Map<String, String> errors = new HashMap<>();
-        errors.put("message", ex.getMessage());
-        return errors;
+        return this.handlingErrorException(ex);
     }
 
     @ExceptionHandler(FileNotFoundException.class)
@@ -141,9 +119,7 @@ public class GlobalHandlerException {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     Map<String, String> fileNotFoundException(FileNotFoundException ex){
 
-        Map<String, String> errors = new HashMap<>();
-        errors.put("message", ex.getMessage());
-        return errors;
+        return this.handlingErrorException(ex);
     }
 
 
@@ -152,9 +128,7 @@ public class GlobalHandlerException {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     Map<String, String> panelDeControlNotFoundException(PanelDeControlNotFoundException ex){
 
-        Map<String, String> errors = new HashMap<>();
-        errors.put("message", ex.getMessage());
-        return errors;
+        return this.handlingErrorException(ex);
     }
 
     @ExceptionHandler(VerificationCodeTriesExaustedException.class)
@@ -162,9 +136,7 @@ public class GlobalHandlerException {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     Map<String, String> verificationCodeTriesExaustedException(VerificationCodeTriesExaustedException ex){
 
-        Map<String, String> errors = new HashMap<>();
-        errors.put("message", ex.getMessage());
-        return errors;
+        return this.handlingErrorException(ex);
     }
 
     @ExceptionHandler(VerificationCodeInvalidCodeException.class)
@@ -172,9 +144,7 @@ public class GlobalHandlerException {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     Map<String, String> verificationCodeInvalidCodeException(VerificationCodeInvalidCodeException ex){
 
-        Map<String, String> errors = new HashMap<>();
-        errors.put("message", ex.getMessage());
-        return errors;
+        return this.handlingErrorException(ex);
     }
 
     @ExceptionHandler(VerificationCodeExpirationException.class)
@@ -182,9 +152,7 @@ public class GlobalHandlerException {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     Map<String, String> verificationCodeExpirationException(VerificationCodeExpirationException ex) {
 
-        Map<String, String> errors = new HashMap<>();
-        errors.put("message", ex.getMessage());
-        return errors;
+        return this.handlingErrorException(ex);
     }
 
 }
