@@ -9,6 +9,7 @@ import com.frankester.gestorDeProyectos.models.Usuario;
 import com.frankester.gestorDeProyectos.services.ArchivosService;
 import com.frankester.gestorDeProyectos.services.TareaService;
 import com.frankester.gestorDeProyectos.services.UsuarioService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.util.Map;
 
 @RepositoryRestController(path = "/tareas")
+@SecurityRequirement(name = "bearerAuth")
 public class TareasController {
 
 

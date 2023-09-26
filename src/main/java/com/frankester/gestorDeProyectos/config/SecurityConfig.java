@@ -3,6 +3,8 @@ package com.frankester.gestorDeProyectos.config;
 import com.frankester.gestorDeProyectos.config.jwt.JWTAuthEntryPoint;
 import com.frankester.gestorDeProyectos.config.jwt.JWTRequestFilter;
 import com.frankester.gestorDeProyectos.services.UsuarioService;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +15,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.socket.EnableWebSocketSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,6 +28,11 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 
 @Configuration
+@SecurityScheme(
+        type = SecuritySchemeType.HTTP,
+        name="bearerAuth",
+        scheme = "bearer"
+)
 public class SecurityConfig {
 
     @Autowired
@@ -40,7 +48,7 @@ public class SecurityConfig {
     public SecurityFilterChain mainSecurityConfiguration(HttpSecurity http) throws Exception {
         http
                 .cors(Customizer.withDefaults())
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/*"))
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/**"))
                 .securityMatcher("/**", "/api/**")
 
                 .authorizeHttpRequests(authorize ->
@@ -48,9 +56,9 @@ public class SecurityConfig {
                             .requestMatchers("/v3/api-docs").permitAll()
                             .requestMatchers("/v3/api-docs/**").permitAll()
                             .requestMatchers("/swagger-ui.html").permitAll()
-                            .requestMatchers("/swagger-ui/**").permitAll()
+                            .requestMatchers("/swagger-ui/**", "/swagger-ui").permitAll()
                             .anyRequest().authenticated()
-                ).formLogin(Customizer.withDefaults())
+                ).formLogin(AbstractHttpConfigurer::disable)
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exHandlingConfigurer -> exHandlingConfigurer.authenticationEntryPoint(new JWTAuthEntryPoint()));

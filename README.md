@@ -61,3 +61,6 @@ spring.mail.password=<your-account-app-password-for-gmail>
  ```
 ### 4. Finalizando la Configuración
 Una vez que hayas realizado todas las configuraciones necesarias en el archivo application.properties, la API estará lista para ser ejecutada. Asegúrate de haber completado todos los pasos anteriores antes de iniciar el servidor.
+
+## Documentacion de la API
+Para ver la documentacion de la api ejecuta el proyecto y visita la siguiente url ``http://localhost:8080/swagger-ui/index.html``

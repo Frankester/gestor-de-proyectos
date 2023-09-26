@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import software.amazon.awssdk.services.s3.S3Client;
 
@@ -60,5 +61,20 @@ public class UsuarioServiceTest {
 
     }
 
+    @Test
+    public void puedo_obtener_un_usuario_por_username(){
+        Usuario usuario = new Usuario();
+        usuario.setUsername("pepe");
+        usuario.setPassword("1234");
+        when(this.repoUsuarios.findByUsername(anyString())).thenReturn(Optional.of(usuario));
+
+        UserDetails user = this.usuarioService.loadUserByUsername("pepe");
+
+        assertThat(user).isNotNull();
+        assertThat(user.getUsername()).isEqualTo(usuario.getUsername());
+        assertThat(user.getPassword()).isEqualTo(usuario.getPassword());
+        assertThat(user.getAuthorities().size()).isEqualTo(0);
+
+    }
 
 }

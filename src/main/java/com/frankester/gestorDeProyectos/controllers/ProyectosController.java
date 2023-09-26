@@ -3,15 +3,13 @@ package com.frankester.gestorDeProyectos.controllers;
 import com.frankester.gestorDeProyectos.exceptions.custom.*;
 import com.frankester.gestorDeProyectos.models.DTOs.ChatRoomRequest;
 import com.frankester.gestorDeProyectos.models.DTOs.ProyectoRequest;
-import com.frankester.gestorDeProyectos.models.DTOs.TareaRequest;
 import com.frankester.gestorDeProyectos.models.PanelDeControl;
 import com.frankester.gestorDeProyectos.models.Proyecto;
-import com.frankester.gestorDeProyectos.models.Tarea;
-import com.frankester.gestorDeProyectos.models.Usuario;
 import com.frankester.gestorDeProyectos.models.mensajeria.ChatRoom;
 import com.frankester.gestorDeProyectos.services.PanelDeControlService;
 import com.frankester.gestorDeProyectos.services.ProyectoService;
 import com.frankester.gestorDeProyectos.services.SalaDeChatService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
@@ -20,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RepositoryRestController(path = "proyectos")
+@SecurityRequirement(name = "bearerAuth")
 public class ProyectosController {
 
     @Autowired

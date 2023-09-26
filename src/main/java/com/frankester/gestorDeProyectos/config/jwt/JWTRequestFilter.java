@@ -44,6 +44,7 @@ public class JWTRequestFilter extends OncePerRequestFilter {
 
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
+                log.info("Usuario logeado correctamente");
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception e){
